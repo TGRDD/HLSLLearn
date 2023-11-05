@@ -8,9 +8,11 @@ Shader "Space/Procedure/Earth"
         _GrassColor("Grass Color", Color) = (0.29, 0.48, 0.22, 1)
         _RockColor("Rock Color", Color) = (0.53, 0.53, 0.53, 1)
         
+        
+        _MountainHeight("Mountain Height", Float) = 100
         _OceanLevel("Ocean Level", Range(1, 5)) = 2
         
-        _Saturation("Saturatuon", Range(0, 3)) = 1
+        _Saturation("Saturatuon", Range(0, 30)) = 1
         _Test("Test", Float) = 0
     }
 
@@ -33,6 +35,7 @@ Shader "Space/Procedure/Earth"
         half _Saturation;
         half _OceanLevel;
         float _Test;
+        float _MountainHeight;
 
         struct Input
         {
@@ -40,22 +43,29 @@ Shader "Space/Procedure/Earth"
         };
         
 
-        void vert(inout appdata_full v)
+        void vert(inout  appdata_full v)
         {
-            
-            //Умножение нормали на коэффициент масштабирования
-            float3 scaledNormal = normalize(v.normal) * _Test;
-    
-            // Добавление результатов к позиции вершины
-            v.vertex.xyz += scaledNormal;
+            float2 uv = v.texcoord;
+            float4 noise = tex2Dlod (_MainTex, float4(v.texcoord.xy,0,0));
 
-            //v.texcoord.y += _Time.y;
+             float height = noise * (5 - _OceanLevel) - 1;
+            
+            float3 scaledNormal = normalize(v.normal);
+        
+            if (noise.y < 0.8)
+            {
+                v.vertex.xyz += scaledNormal * height * _Test;
+            }
+            else
+            {
+                v.vertex.xyz += scaledNormal * height * _MountainHeight  * _Test;
+            }
             
         }
 
-        void surf(Input IN, inout SurfaceOutput o)
+        void surf(Input IN,  inout SurfaceOutput o)
         {
-            // Генерация шума Перлина
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             float noise = tex2D(_MainTex, IN.uv_MainTex).b;
 
             float2 uv = IN.uv_MainTex;
@@ -63,17 +73,18 @@ Shader "Space/Procedure/Earth"
             fixed4 c = tex2D(_MainTex, uv);
             
             
-            // Определение высоты по шуму
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
             float height = noise * (5 - _OceanLevel) - 1;
 
-            // Присваивание цвета в зависимости от высоты
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             
             float4 currentcollor;
             if (height <= 0.0)
             {
                 currentcollor = _WaterColor;
+                
             }
-            else if (height <= 0.2)
+            else if (height <= 0.1)
             {
                 currentcollor = _SandColor;
             }
@@ -81,20 +92,24 @@ Shader "Space/Procedure/Earth"
             {
                 currentcollor = _GrassColor;
             }
-            else
+            else if (height <= 1.1)
             {
                 currentcollor = _RockColor;
             }
-
+            else
+            {
+                currentcollor = 0.6;
+            }
 
             
-            o.Albedo = c.rgb * currentcollor.rgb;
+            
+            o.Albedo = c.rgb * currentcollor.rgb; //CHANGE THIS
             o.Alpha = c.a * currentcollor.a;
 
             
             o.Albedo *= _Saturation;
             
-            // Высота вертексов в зависимости от значения шума
+            // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             o.Normal = float3(0, 0, height);
         }
         ENDCG

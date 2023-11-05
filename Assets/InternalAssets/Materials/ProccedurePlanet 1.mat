@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ProccedurePlanet 1
-  m_Shader: {fileID: 4800000, guid: 441ab91088af5af45bbfb86fbb4b25bc, type: 3}
+  m_Shader: {fileID: 4800000, guid: da1017dd69c06c140ae76a1fc8e19179, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 03da7ff91b8bfb44ca75e62b262193f4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6ece3e6ab85402f4e882a5d5993c36a2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -70,21 +70,22 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
+    - _MountainHeight: 1.54
     - _OcclusionStrength: 1
-    - _OceanLevel: 2.72
+    - _OceanLevel: 2.31
     - _Parallax: 0.02
-    - _Saturation: 1.259
+    - _Saturation: 4.4
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Test: 0
+    - _Test: 0.11
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GrassColor: {r: 0.17846857, g: 0.38679248, b: 0.10034712, a: 1}
-    - _RockColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
-    - _SandColor: {r: 0.9051101, g: 0.9150943, b: 0.34100214, a: 1}
-    - _WaterColor: {r: 0.35644355, g: 0.35644355, b: 0.8490566, a: 1}
+    - _GrassColor: {r: 0.06857961, g: 0.1981132, b: 0.01027946, a: 1}
+    - _RockColor: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 1}
+    - _SandColor: {r: 0.7924528, g: 0.7426357, b: 0.55695975, a: 1}
+    - _WaterColor: {r: 0.043137245, g: 0.6208596, b: 0.99215686, a: 1}
   m_BuildTextureStacks: []
