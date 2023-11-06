@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SpaceUnit : MonoBehaviour, IContainerEnity
+public class SpaceUnit : IContainerEnity
 {
     private IBodyBehavior _bodyBehavior;
     

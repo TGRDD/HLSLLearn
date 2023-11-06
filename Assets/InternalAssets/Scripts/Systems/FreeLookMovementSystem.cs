@@ -1,14 +1,27 @@
 using PlayerControllable;
 using UnityEngine;
 using System;
+using Zenject;
+
 public class FreeLookMovementSystem : IMovementSystem
 {
     private Transform _controllableObject;
     private float _fixedspeed;
     private float _speed;
+    private float _sensivity;
 
-    private Vector3 _forwardInput;
-    private Vector3 _rightInput;
+    private Vector3 _forwardInputVector;
+    private Vector3 _rightInputVector;
+
+    private IInputSystem _inputSystem;
+
+    private float mouseX, mouseY;
+
+    [Inject]
+    public FreeLookMovementSystem(IInputSystem inputSystem)
+    {
+        _inputSystem = inputSystem;
+    }
 
     public float Speed
     {
@@ -22,41 +35,61 @@ public class FreeLookMovementSystem : IMovementSystem
         }
     }
 
+    public float Sensivity
+    {
+        get
+        {
+            return _sensivity;
+        }
+        set
+        {
+            _sensivity = value;
+        }
+    }
+
     public void Move()
     {
         //Debug.Log("Move callback");
 
+        Vector3 MoveVector = Vector3.zero;
+
         //FixSpeed
-         _fixedspeed = _speed * Time.fixedDeltaTime;
+        _fixedspeed = _speed * Time.fixedDeltaTime;
 
 
         // MoveForward;
-        _forwardInput = _controllableObject.forward * _fixedspeed * Input.GetAxis("Vertical");
+        _forwardInputVector = _controllableObject.forward * _fixedspeed * _inputSystem.AxisForward;
         
         // MoveRight;
-        _rightInput = _controllableObject.right * _fixedspeed * Input.GetAxis("Horizontal");
-        
+        _rightInputVector = _controllableObject.right * _fixedspeed * _inputSystem.AxisRight;
+
+
+
         //MoveUp
-        if (Input.GetKey(KeyCode.Space)) { _controllableObject.position += Vector3.up * _fixedspeed; }
+        if (_inputSystem.InputUp()) { MoveVector += Vector3.up * _fixedspeed; }
+
+        Debug.Log(MoveVector);
 
         //MoveDown
-        if (Input.GetKey(KeyCode.LeftControl)) { _controllableObject.position -= Vector3.up * _fixedspeed; }
-        
-        //ApplyVectors
-        _controllableObject.position += _forwardInput + _rightInput;
+        if (_inputSystem.InputDown()) { MoveVector -= Vector3.up * _fixedspeed; }
 
-       
-        //RotateLeft
-        if (Input.GetKey(KeyCode.LeftArrow)) 
-        {
-            _controllableObject.Rotate(0, -1, 0);
-        }
-        
-        //RotateRight
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            _controllableObject.Rotate(0, 1, 0);
-        }
+
+
+        //ApplyVectors
+        MoveVector += _forwardInputVector + _rightInputVector;
+        _controllableObject.position += MoveVector;
+
+
+
+
+        mouseX += _inputSystem.ViewAxisRight * Sensivity;
+        mouseY -= _inputSystem.ViewAxisUp * Sensivity;
+
+        // ќграничиваем угол вращени€ по оси Y от -90 до 90 градусов
+        mouseY = Mathf.Clamp(mouseY, -90f, 90f);
+
+        // ѕримен€ем вращение камеры
+        _controllableObject.rotation = Quaternion.Euler(mouseY, mouseX, 0f);
 
 
         return;
@@ -69,5 +102,6 @@ public class FreeLookMovementSystem : IMovementSystem
 
         _controllableObject = Data.UnitTransform;
         Speed = Data.MovementSpeed;
+        Sensivity = Data.Sensivity;
     }
 }
